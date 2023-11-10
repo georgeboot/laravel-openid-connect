@@ -4,6 +4,7 @@ namespace OpenIDConnect;
 
 use DateInterval;
 use DateTimeImmutable;
+use Illuminate\Support\Facades\Request;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Configuration;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -50,7 +51,7 @@ class IdTokenResponse extends BearerTokenResponse
         return $this->config
             ->builder()
             ->permittedFor($accessToken->getClient()->getIdentifier())
-            ->issuedBy('https://' . $_SERVER['HTTP_HOST'])
+            ->issuedBy('https://' . Request::host())
             ->issuedAt($dateTimeImmutableObject)
             ->expiresAt($dateTimeImmutableObject->add(new DateInterval('PT1H')))
             ->relatedTo($userEntity->getIdentifier());
