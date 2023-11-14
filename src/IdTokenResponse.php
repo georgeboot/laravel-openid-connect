@@ -59,7 +59,7 @@ class IdTokenResponse extends BearerTokenResponse
         $authCodePayload = json_decode($this->decrypt(Request::input('code')), true);
 
         if (isset($authCodePayload['nonce'])) {
-            $builder->withClaim('nonce', $authCodePayload['nonce']);
+            $builder = $builder->withClaim('nonce', $authCodePayload['nonce']);
         }
 
         return $builder;
