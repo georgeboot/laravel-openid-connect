@@ -48,13 +48,21 @@ class IdTokenResponse extends BearerTokenResponse
             ($this->useMicroseconds ? microtime(true) : time())
         );
 
-        return $this->config
+        $builder = $this->config
             ->builder()
             ->permittedFor($accessToken->getClient()->getIdentifier())
             ->issuedBy('https://' . Request::host())
             ->issuedAt($dateTimeImmutableObject)
             ->expiresAt($dateTimeImmutableObject->add(new DateInterval('PT1H')))
             ->relatedTo($userEntity->getIdentifier());
+
+        $authCodePayload = json_decode($this->decrypt(Request::input('code')), true);
+
+        if (isset($authCodePayload['nonce'])) {
+            $builder->withClaim('nonce', $authCodePayload['nonce']);
+        }
+
+        return $builder;
     }
 
     protected function getExtraParams(AccessTokenEntityInterface $accessToken): array

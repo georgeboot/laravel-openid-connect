@@ -11,7 +11,9 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use League\OAuth2\Server\AuthorizationServer;
 use OpenIDConnect\ClaimExtractor;
 use OpenIDConnect\Claims\ClaimSet;
+use OpenIDConnect\Grant\AuthCodeGrant;
 use OpenIDConnect\IdTokenResponse;
+use Laravel\Passport\Bridge;
 
 class PassportServiceProvider extends Passport\PassportServiceProvider
 {
@@ -62,6 +64,18 @@ class PassportServiceProvider extends Passport\PassportServiceProvider
             $cryptKey,
             app(Encrypter::class)->getKey(),
             $responseType,
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function buildAuthCodeGrant()
+    {
+        return new AuthCodeGrant(
+            $this->app->make(Bridge\AuthCodeRepository::class),
+            $this->app->make(Bridge\RefreshTokenRepository::class),
+            new \DateInterval('PT10M')
         );
     }
 }
