@@ -56,7 +56,7 @@ class IdTokenResponse extends BearerTokenResponse
             ->expiresAt($dateTimeImmutableObject->add(new DateInterval('PT1H')))
             ->relatedTo($userEntity->getIdentifier());
 
-        if ($code = Request::has('code')) {
+        if ($code = Request::input('code')) {
             $authCodePayload = json_decode($this->decrypt($code), true);
 
             if (isset($authCodePayload['nonce'])) {
