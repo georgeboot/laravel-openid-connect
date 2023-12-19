@@ -56,10 +56,12 @@ class IdTokenResponse extends BearerTokenResponse
             ->expiresAt($dateTimeImmutableObject->add(new DateInterval('PT1H')))
             ->relatedTo($userEntity->getIdentifier());
 
-        $authCodePayload = json_decode($this->decrypt(Request::input('code')), true);
+        if ($code = Request::has('code')) {
+            $authCodePayload = json_decode($this->decrypt($code), true);
 
-        if (isset($authCodePayload['nonce'])) {
-            $builder = $builder->withClaim('nonce', $authCodePayload['nonce']);
+            if (isset($authCodePayload['nonce'])) {
+                $builder = $builder->withClaim('nonce', $authCodePayload['nonce']);
+            }
         }
 
         return $builder;
